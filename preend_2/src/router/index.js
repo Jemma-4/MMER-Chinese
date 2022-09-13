@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Upload from '../views/upload.vue'
 import About from '../views/About.vue'
+import Audio from '../views/Audio.vue'
 
 Vue.use(VueRouter)
 // const originalPush = VueRouter.prototype.push
@@ -13,7 +14,7 @@ const routes = [
     {
       path: '/',
       name: 'Default',
-      redirect: '/upload'
+      redirect: '/audio'
     },
     {
       path:'/upload',
@@ -33,6 +34,11 @@ const routes = [
         name: 'About',
         component: About
     }, //预览页
+    {
+        path: '/audio',
+        name: 'Audio',
+        component: Audio
+    }
 ]
 
 const router = new VueRouter({  

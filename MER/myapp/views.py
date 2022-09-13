@@ -1,16 +1,15 @@
-import random
 import re
 import os
 import mimetypes
 import json
-import asyncio
 from django.views.decorators.http import require_http_methods
-from django.http import JsonResponse, StreamingHttpResponse
+from django.http import JsonResponse, StreamingHttpResponse, HttpResponse
 from wsgiref.util import FileWrapper
 
 from . import opt
-from .services.video import handle_uploaded_file, file_iterator, video_exist, get_video_path, process_video, detach_video_modal
-from 
+from .services.audio import handle_uploaded_audio, get_audio_path
+from .services.video import handle_uploaded_video, file_iterator, video_exist, get_video_path, process_video, detach_video_modal
+ 
 # 测试接口
 @require_http_methods(["GET"])
 def test(request):
@@ -18,10 +17,10 @@ def test(request):
     try:
         # 保留视频分离音频的入口
         detach_video_modal('./myapp/video/test1.mp4')
-        response['msg'] = 'ok'
+        response['ok'] = 1
     except Exception as e:
         print(e)
-        response['msg'] = str(e)
+        response['ok'] = 0
         response['error_num'] = 1
     return JsonResponse(response)
 
@@ -31,7 +30,7 @@ def uploadVideo(request):
     response = {'ok': 0}
     try:
         video = request.FILES['file']
-        result = handle_uploaded_file(video)
+        result = handle_uploaded_video(video)
         response['ok'] = 1
         response['result'] = result
     except Exception as e:
@@ -87,6 +86,45 @@ def getChartData(request):
         response['msg'] = str(e)
     return JsonResponse(response)
 
+# 接受上传的音频
+@require_http_methods(["POST"])
+def uploadAudio(request):
+    response = {'ok': 0}
+    try:
+        audio = request.FILES['file']
+        result = handle_uploaded_audio(audio)
+        response['ok'] = 1
+        response['result'] = result
+    except Exception as e:
+        print(e)
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+# 语音结果数据
+@require_http_methods(["GET"])
+def getAudioResult(request):
+    response = {}
+    try:
+        result_file_path = opt.audioroot + str(request.GET.get('audioMD5')) + '.json'
+        result_data = json.load(open(result_file_path, 'r'))
+        response['ok'] = 1
+        response['data'] = result_data
+    except Exception as e:
+        print(e)
+        response['ok'] = 0
+        response['msg'] = str(e)
+    return JsonResponse(response)
+
+def playAudio(request):
+    try:
+        audio_file_path = get_audio_path(request.GET.get('audioMD5'))
+        wrapper = FileWrapper(open(audio_file_path, 'rb'))
+
+        response = HttpResponse(wrapper, content_type="audio/mpeg")
+        response['Content-Length'] = os.path.getsize(audio_file_path)
+        return response
+    except:
+        return HttpResponse()
 
 @require_http_methods(["GET"])
 def generFakeData(request):
@@ -102,7 +140,7 @@ def generFakeData(request):
     return JsonResponse(response)
 
 @require_http_methods(["GET"])
-def RecognizeLongSpeech(request):
+def recognizeLongSpeech(request):
     response = {}
     try:
         response['ok'] = 1

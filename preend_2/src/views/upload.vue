@@ -102,6 +102,7 @@ export default {
       }, 1000)
 
     },
+    
     async operCamera() {
       if (this.openCame) {
         this.stopCamera();
@@ -109,6 +110,7 @@ export default {
         await this.openCamera();
       }
     },
+
     async openCamera() {
       try {
         clearMsg();

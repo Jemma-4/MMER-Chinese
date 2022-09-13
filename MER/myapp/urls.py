@@ -3,9 +3,12 @@ from . import views
 
 urlpatterns = [
     path('test/', views.test, ),
-    path('uploadVideo/', views.uploadVideo, ),
+    path('uploadVideo/', views.uploadVideo,),
     path('playVideo/', views.playVideo,),
     path('getChartData/', views.getChartData,),
     path('generFakeData/', views.generFakeData,),
-    path('RecognizeLongSpeech/', views.RecognizeLongSpeech)
+    path('recognizeLongSpeech/', views.recognizeLongSpeech,),
+    path('uploadAudio/', views.uploadAudio,),
+    path('getAudioResult/', views.getAudioResult,),
+    path('playAudio/', views.playAudio,)
 ]
