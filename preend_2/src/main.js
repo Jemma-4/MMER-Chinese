@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Upload, Button, Row, Select, Option, Message } from 'element-ui'
+import { Upload, Button, Row, Select, Option, Message, Form, FormItem, Input } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as echarts from 'echarts'
 
@@ -12,6 +12,9 @@ Vue.use(Button)
 Vue.use(Row)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Form)
+Vue.use(FormItem)
+Vue.use(Input)
 Vue.prototype.$echarts = echarts
 Vue.prototype.$message = Message;
 

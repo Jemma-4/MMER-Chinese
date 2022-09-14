@@ -4,7 +4,7 @@
 
 #### preend_1--项目前端一页版
 
-#### preend_2--项目后端两页版
+#### preend_2--项目后端两页版，附带语音识别界面
 
 #### PaddlePaddle-DeepSpeech--语音识别服务
 

@@ -10,5 +10,6 @@ urlpatterns = [
     path('recognizeLongSpeech/', views.recognizeLongSpeech,),
     path('uploadAudio/', views.uploadAudio,),
     path('getAudioResult/', views.getAudioResult,),
-    path('playAudio/', views.playAudio,)
+    path('playAudio/', views.playAudio,),
+    path('tagAudio/', views.tagAudio)
 ]

@@ -11,17 +11,30 @@
 			<h2>录音时长：{{duration}}s</h2>
 		</div>
 
-		<el-upload :action="upload_url" :multiple="false" :file-list="fileList" :on-success="uploadSuccess" 
-		:on-progress="uploadProgress" ref="upload">
+		<el-upload :action="upload_url" :multiple="false" :file-list="fileList" :on-success="uploadSuccess"
+			:on-progress="uploadProgress" ref="upload">
 			<el-button type="primary" id="upload">上传已有文件</el-button>
 		</el-upload>
-		
+
 		<div v-if="processReady">
 			<p class="result">初步判断：{{resultData['result']}}</p>
 			<audio controls>
 				<source :src="audio_url">
 			</audio>
-			
+
+			<el-form :inline="true" :model="formInline" class="demo-form-inline">
+				<!-- <el-form-item label="标注">
+					<el-input v-model="formInline.user" placeholder="审批人"></el-input>
+				</el-form-item> -->
+				<el-form-item label="更改标注">
+					<el-select v-model="formInline.tag">
+						<el-option v-for="tag in taglist" :key="tag" :label="tag" :value="tag"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="onSubmit">查询</el-button>
+				</el-form-item>
+			</el-form>
 		</div>
 
 		<!-- 标注数据	 -->
@@ -46,7 +59,9 @@ export default {
 			audioMD5: '',
 			audio_url: '',
 			upload_url: baseurl + "uploadAudio/",
-			fileList:[]
+			fileList: [],
+			formInline: { tag: '' },
+			taglist: ['高兴', '惊讶', '中性', '疲惫', '生气', '伤心', '厌恶', '害怕'],
 		}
 	},
 	methods: {
@@ -175,6 +190,7 @@ export default {
 		uploadSuccess(response) {
 			this.$refs.upload.clearFiles();
 			var audioMD5 = response.result.data
+			this.audioMD5 = audioMD5
 			var that = this;
 
 			var interval = setInterval(function () {
@@ -198,17 +214,25 @@ export default {
 				});
 			}, 1000)
 		},
-		uploadProgress(){
+		uploadProgress() {
 			this.processReady = false;
-		}
-
-		/**预留接口：获取问题题目 */
-		/**预留接口：上传音频文件 */
-		/**预留接口：获取音频结果 */
+		},
+		//提交音频标注
+		onSubmit() {
+			get({
+				url: baseurl + "tagAudio/?audioMD5=" + this.audioMD5 + '&tag=' + this.formInline.tag,
+			}).then((res) => {
+				if (res.data.ok != 0) {
+					this.$message({
+						title: '成功',
+						message: '标注成功',
+						type: 'success'
+					});
+				}
+			})
+		}		
 	}
 }
-
-
 </script>
 
 <style scoped>
@@ -228,7 +252,7 @@ export default {
 	padding-bottom: 2%;
 }
 
-.recordBtns{
+.recordBtns {
 	padding-bottom: 2%;
 }
 </style>
