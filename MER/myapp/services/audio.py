@@ -3,7 +3,6 @@ import scipy.io.wavfile as wavfile
 import numpy as np
 import contextlib
 import wave
-import json
 import os
 import time
 from myapp.utils.MyThread import MyThread
@@ -34,16 +33,26 @@ def handle_uploaded_audio(f):
 
 
 def process_audio_test(md5_val):
-    json_file = md5_val + '.json'
+    # json_file = md5_val + '.json'
     time.sleep(5)
 
-    data = {'result': '惆怅'}
+    audio = Audio.objects.filter(audio_md5=md5_val)[0]
+    audio.emotion_tag = '惆怅'
+    audio.save()
+    # data = {'result': '惆怅'}
 
-    json.dump(data, open(opt.audioroot + '%s' % json_file, 'w'))
+    # json.dump(data, open(opt.audioroot + '%s' % json_file, 'w'))
+
 
 def get_audio_path(md5_val):
     audio = Audio.objects.filter(audio_md5=md5_val)
     return audio[0].audio_path
+
+
+def get_audio_tag(md5_val):
+    audio = Audio.objects.filter(audio_md5=md5_val)
+    return audio[0].emotion_tag
+
 
 def audio_exist(md5_val):
     audio = Audio.objects.filter(audio_md5=md5_val)
@@ -51,6 +60,12 @@ def audio_exist(md5_val):
         return True
     else:
         return False
+
+
+def tag_audio(md5_val, tag):
+    audio = Audio.objects.filter(audio_md5=md5_val)[0]
+    audio.emotion_tag = tag
+    audio.save()
 
 # 音频格式统一为单声道，频率保持在(8000, 16000, 32000, 48000)中
 def audio_process(audio_path):
