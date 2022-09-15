@@ -1,5 +1,7 @@
 # 导入所需的第三方库
+from doctest import Example
 import math
+from unittest import result
 import numpy as np
 import os
 from functools import partial
@@ -56,10 +58,10 @@ def train(args,
     if not  os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    weight_decay = args.weight_decay
-    learning_rate = args.learning_rate
-    num_training_steps = args.num_training_steps
-    warmup_proportion = args.warmup_proportion
+    weight_decay = args["weight_decay"]
+    learning_rate = args["learning_rate"]
+    num_training_steps = args["num_training_steps"]
+    warmup_proportion = args["warmup_proportion"]
 
     lr_scheduler = LinearDecayWithWarmup(learning_rate, num_training_steps, warmup_proportion)
     # AdamW优化器
@@ -79,7 +81,7 @@ def train(args,
     pre_accu=0
     accu=0
     global_step = 0
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(1, args["epochs"] + 1):
         for step, batch in enumerate(train_data_loader, start=1):
             input_ids, segment_ids, labels = batch
             logits = model(input_ids, segment_ids)
@@ -108,7 +110,7 @@ def train(args,
 
 def main():
     # 批处理大小，显存如若不足的话可以适当改小该值  
-    batch_size = 32
+    batch_size = 8
     # 文本序列最大截断长度，需要根据文本具体长度进行确定，不超过512
     max_seq_length = 128
 
@@ -156,20 +158,29 @@ def main():
         trans_fn=trans_func)
 
     # 定义模型超参数
-    args={}
+    args = { }
     # 定义训练过程中的最大学习率
-    args.learning_rate = 2e-5
+    args["learning_rate"] = 2e-5
     # 训练轮次
-    args.epochs = 3
+    args["epochs"] = 3
     # 学习率预热比例
-    args.warmup_proportion = 0.1
+    args["warmup_proportion"] = 0.1
     # 权重衰减系数，类似模型正则项策略，避免模型过拟合
-    args.weight_decay = 0.01
-    args.num_training_steps = len(train_data_loader) * args.epochs
-    train(args,model,tokenizer,train_data_loader,dev_data_loader)
+    args["weight_decay"] = 0.01
+    args["num_training_steps"] = len(train_data_loader) * args["epochs"]
+
+    # 模型训练 todo
+    # train(args,model,tokenizer,train_data_loader,dev_data_loader)
+
+    # 测试模型 todo
+    # 交叉熵损失函数
+    criterion = paddle.nn.loss.CrossEntropyLoss()  
+    # accuracy评价指标
+    metric = paddle.metric.Accuracy()  
+    test(model,criterion,metric,dev_data_loader,test_data_loader)
 
 def test(model,criterion,metric,dev_data_loader,test_data_loader):
-    params_path = '../checkpoint/model_state.pdparams'
+    params_path = './checkpoint/model_state.pdparams'
     if params_path and os.path.isfile(params_path):
         # 加载模型参数
         state_dict = paddle.load(params_path)
@@ -181,5 +192,89 @@ def test(model,criterion,metric,dev_data_loader,test_data_loader):
     # 对测试集进行评估
     evaluate(model, criterion, metric, test_data_loader)
 
+def predict(text_emo):
+
+    # 加载模型和tokenizer
+    model = ppnlp.transformers.NeZhaForSequenceClassification.from_pretrained('nezha-large-wwm-chinese', num_classes=6)
+    tokenizer =  ppnlp.transformers.NeZhaTokenizer.from_pretrained('nezha-large-wwm-chinese')
+
+    # 加载训练好的模型参数
+    params_path = './checkpoint/model_state.pdparams'
+    if params_path and os.path.isfile(params_path):
+        # 加载模型参数
+        state_dict = paddle.load(params_path)
+        model.set_dict(state_dict)
+        print("Loaded parameters from %s" % params_path)
+    batch_size = 1
+    label_map = ['happy', 'sad', 'neutral', 'fear', 'angry', 'surprise']
+
+    # 分词 + 向量化
+    examples = []
+    for text in text_emo:
+        input_ids, segment_ids = convert_example(
+            text,
+            tokenizer,
+            max_seq_length=128,
+            is_test=True)
+        examples.append((input_ids, segment_ids))
+    
+    batchify_fn = lambda samples, fn=Tuple(
+        Pad(axis=0, pad_val=tokenizer.pad_token_id),  # input id
+        Pad(axis=0, pad_val=tokenizer.pad_token_id),  # segment id
+    ): fn(samples)
+
+    # Seperates data into some batches.
+    batches = []
+    one_batch = []
+    for example in examples:
+        one_batch.append(example)
+        if len(one_batch) == batch_size:
+            batches.append(one_batch)
+            one_batch = []
+    if one_batch:
+        # The last batch whose size is less than the config batch_size setting.
+        batches.append(one_batch)
+
+    results = []
+    model.eval()
+    for batch in batches:
+        input_ids, segment_ids = batchify_fn(batch)
+        input_ids = paddle.to_tensor(input_ids)
+        segment_ids = paddle.to_tensor(segment_ids)
+        logits = model(input_ids, segment_ids)
+        probs = F.softmax(logits, axis=1)
+        idx = paddle.argmax(probs, axis=1).numpy()
+        idx = idx.tolist()
+        labels = [label_map[i] for i in idx]
+        results.extend(labels)
+    return results
+
+# 用于构造适合模型的输入
+def data_preprocess(text_list):
+    result = []
+    for text in text_list:
+        text_item = {}
+        text_item["text_a"] = text
+        result.append(text_item)
+    return result
+
 if __name__== "__main__" :
-    main()
+    paddle.device.set_device('gpu:0')
+
+    # 前端识别到的文本列表
+    # 定义要进行预测的样本数据
+    test_text = [
+        # angry
+        '更年期的女boss真的让人受不了，烦躁',
+        # fear
+        '尼玛吓死我了，人家剪个头发回来跟劳改犯一样短的可怕，后面什么鬼[黑线][黑线][黑线][白眼][白眼]',
+        # sad
+        '一个人真无聊，美食都没味了，你要在就好了…唉………',
+        # neutral
+        "这个村的年轻人大多数都出外打工。",
+        # happy
+        "谢谢honey们帮我庆祝生日！！！谢谢你们的祝福，谢谢身边的所有人！爱你们",
+        # surprise
+        "我竟然才知道我有一个富二代加官二代加红二代的朋友"
+    ]
+    print(predict(data_preprocess(test_text)))

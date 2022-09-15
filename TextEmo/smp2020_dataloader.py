@@ -17,6 +17,7 @@ class EmotionData(DatasetBuilder):
 
     def _read(self, filename):
         """读取数据"""
+        print("读取数据",filename)
         with open(filename, 'r') as f:
             head = None
             for line in f:
@@ -25,10 +26,10 @@ class EmotionData(DatasetBuilder):
                     head = data
                 else:
                     text_a, label = data
-                    yield {"text_a": text_a, "label": label}  # 数据的格式：text_a,label
+                    yield {"text_a": text_a, "label": int(label)}  # 数据的格式：text_a,label
 
     def get_labels(self):
-        label_list = ['happy', 'sad', 'neutral', 'fear', 'angry', 'surprise']
+        label_list = [0, 1, 2, 3, 4, 5]
         return label_list   # 类别标签
 
 # 定义数据集加载函数
