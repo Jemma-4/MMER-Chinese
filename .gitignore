@@ -1,3 +1,4 @@
 .idea
 static
 migrations
+PaddlePaddle-DeepSpeech/models/

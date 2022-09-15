@@ -17,7 +17,7 @@
 		</el-upload>
 
 		<div v-if="processReady">
-			<p class="result">初步判断：{{resultData['result']}}</p>
+			<p class="result">初步判断：{{resultData['tag']}}</p>
 			<audio controls>
 				<source :src="audio_url">
 			</audio>
@@ -199,6 +199,7 @@ export default {
 				}).then((res) => {
 					if (res.data.ok != 0) {
 						that.audio_url = baseurl + "playAudio/?audioMD5=" + audioMD5;
+						//that.resultData在改动后会接收到数据{'tag': xx, 'text': xx}
 						that.resultData = res.data.data;
 						that.processReady = true;
 						clearInterval(interval);

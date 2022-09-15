@@ -4,11 +4,15 @@ import numpy as np
 import contextlib
 import wave
 import os
-import time
+import requests
+import json
 from myapp.utils.MyThread import MyThread
 from myapp.utils.extractMD5 import extractMD5
 from myapp.models import Audio
 from myapp import opt
+
+audio_reco_url = 'http://127.0.0.1:5000/recognition'
+text_emo_url = 'http://127.0.0.1:2233/textemo'
 
 def handle_uploaded_audio(f):
     result = {}
@@ -22,9 +26,10 @@ def handle_uploaded_audio(f):
         result['msg'] = 'audio already exist'
         os.remove(temp_path)
     else:
-        video_path = opt.audioroot + '%s' % (md5_val + postfix)
-        os.rename(temp_path, video_path)
-        Audio.objects.create(audio_md5=md5_val, audio_path=video_path)
+        audio_path = opt.audioroot + '%s' % (md5_val + postfix)
+        os.rename(temp_path, audio_path)
+        audio_format_confirm(audio_path)
+        Audio.objects.create(audio_md5=md5_val, audio_path=audio_path)
         result['msg'] = 'upload success'
         # 开线程防止阻塞
         new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
@@ -34,10 +39,16 @@ def handle_uploaded_audio(f):
 
 def process_audio_test(md5_val):
     # json_file = md5_val + '.json'
-    time.sleep(5)
+    # time.sleep(5)
 
+    audio_path = get_audio_path(md5_val)
+    response = requests.post(audio_reco_url, files={'audio': open(audio_path, 'rb')})
+    audio_text = response.json()['result']
+    response = requests.post(text_emo_url, data={'text': audio_text})
+    text_emo = response.json()['emo'][0]
     audio = Audio.objects.filter(audio_md5=md5_val)[0]
-    audio.emotion_tag = '惆怅'
+    audio.emotion_tag = text_emo
+    audio.rec_text = audio_text
     audio.save()
     # data = {'result': '惆怅'}
 
@@ -45,13 +56,13 @@ def process_audio_test(md5_val):
 
 
 def get_audio_path(md5_val):
-    audio = Audio.objects.filter(audio_md5=md5_val)
-    return audio[0].audio_path
+    audio = Audio.objects.filter(audio_md5=md5_val)[0]
+    return audio.audio_path
 
 
-def get_audio_tag(md5_val):
-    audio = Audio.objects.filter(audio_md5=md5_val)
-    return audio[0].emotion_tag
+def get_audio_result(md5_val):
+    audio = Audio.objects.filter(audio_md5=md5_val)[0]
+    return audio.emotion_tag, audio.rec_text
 
 
 def audio_exist(md5_val):
@@ -68,7 +79,7 @@ def tag_audio(md5_val, tag):
     audio.save()
 
 # 音频格式统一为单声道，频率保持在(8000, 16000, 32000, 48000)中
-def audio_process(audio_path):
+def audio_format_confirm(audio_path):
     sample_rate = 0
     nchannels = 0
     with contextlib.closing(wave.open(audio_path, 'rb')) as wf:
@@ -78,7 +89,9 @@ def audio_process(audio_path):
         nchannels = wf.getnchannels()
 
     # framerate 帧速转换
-    if sample_rate > 48000:
+    if sample_rate in [48000, 32000, 16000, 8000]:
+        samplerate = sample_rate
+    elif sample_rate > 48000:
         samplerate = 48000
     elif sample_rate > 32000:
         samplerate = 32000

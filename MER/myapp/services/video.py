@@ -7,7 +7,7 @@ from myapp.utils.MyThread import MyThread
 from myapp.utils.extractMD5 import extractMD5
 from myapp import opt
 from myapp.models import Video
-from .audio import audio_process
+from .audio import audio_format_confirm
 
 
 def handle_uploaded_video(f):
@@ -98,7 +98,7 @@ def detach_video_modal(md5_val):
         audio_path = os.path.join(root_path,video_name + ".wav")
         clip_process = mp.VideoFileClip(video_path)
         clip_process.audio.write_audiofile(audio_path)
-        audio_process(audio_path)
+        audio_format_confirm(audio_path)
 
     else:
         print("视频资源数据库中不存在")

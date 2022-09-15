@@ -7,7 +7,7 @@ from django.http import JsonResponse, StreamingHttpResponse, HttpResponse
 from wsgiref.util import FileWrapper
 
 from . import opt
-from .services.audio import handle_uploaded_audio, get_audio_path, tag_audio, get_audio_tag
+from .services.audio import handle_uploaded_audio, get_audio_path, tag_audio, get_audio_result
 from .services.video import handle_uploaded_video, file_iterator, video_exist, get_video_path, process_video, detach_video_modal
  
 # 测试接口
@@ -103,10 +103,10 @@ def uploadAudio(request):
 def getAudioResult(request):
     response = {'ok': 0}
     try:
-        emotion_tag = get_audio_tag(str(request.GET.get('audioMD5')))
+        emotion_tag, rec_text = get_audio_result(str(request.GET.get('audioMD5')))
         if emotion_tag is not None:
             response['ok'] = 1
-            response['data'] = {'result': emotion_tag}
+            response['data'] = {'tag': emotion_tag, 'text': rec_text}
     except Exception as e:
         print(e)
         response['msg'] = str(e)

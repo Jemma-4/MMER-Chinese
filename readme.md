@@ -28,6 +28,9 @@
     解压至`PaddlePaddle-DeepSpeech/models`目录下
 
   + 导出模型
+    ```
+    python export_model.py --resume_model=./models/param/50.pdparams
+    ```
 
   + web部署
 

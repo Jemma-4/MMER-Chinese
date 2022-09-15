@@ -13,5 +13,6 @@ cn2an==0.5.11
 zhconv==1.4.2
 pyaudio~=0.2.11
 flask~=1.1.2
+markupsafe==2.0.1
 flask-cors
 lac
