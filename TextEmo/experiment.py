@@ -56,10 +56,10 @@ def train(args,
     if not  os.path.exists(save_dir):
         os.makedirs(save_dir)
 
-    weight_decay = args.weight_decay
-    learning_rate = args.learning_rate
-    num_training_steps = args.num_training_steps
-    warmup_proportion = args.warmup_proportion
+    weight_decay = args["weight_decay"]
+    learning_rate = args["learning_rate"]
+    num_training_steps = args["num_training_steps"]
+    warmup_proportion = args["warmup_proportion"]
 
     lr_scheduler = LinearDecayWithWarmup(learning_rate, num_training_steps, warmup_proportion)
     # AdamW优化器
@@ -79,7 +79,7 @@ def train(args,
     pre_accu=0
     accu=0
     global_step = 0
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(1, args["epochs"] + 1):
         for step, batch in enumerate(train_data_loader, start=1):
             input_ids, segment_ids, labels = batch
             logits = model(input_ids, segment_ids)
@@ -108,7 +108,7 @@ def train(args,
 
 def main():
     # 批处理大小，显存如若不足的话可以适当改小该值  
-    batch_size = 32
+    batch_size = 8
     # 文本序列最大截断长度，需要根据文本具体长度进行确定，不超过512
     max_seq_length = 128
 
@@ -156,20 +156,29 @@ def main():
         trans_fn=trans_func)
 
     # 定义模型超参数
-    args={}
+    args = { }
     # 定义训练过程中的最大学习率
-    args.learning_rate = 2e-5
+    args["learning_rate"] = 2e-5
     # 训练轮次
-    args.epochs = 3
+    args["epochs"] = 3
     # 学习率预热比例
-    args.warmup_proportion = 0.1
+    args["warmup_proportion"] = 0.1
     # 权重衰减系数，类似模型正则项策略，避免模型过拟合
-    args.weight_decay = 0.01
-    args.num_training_steps = len(train_data_loader) * args.epochs
-    train(args,model,tokenizer,train_data_loader,dev_data_loader)
+    args["weight_decay"] = 0.01
+    args["num_training_steps"] = len(train_data_loader) * args["epochs"]
+
+    # 模型训练 todo
+    # train(args,model,tokenizer,train_data_loader,dev_data_loader)
+
+    # 测试模型 todo
+    # 交叉熵损失函数
+    criterion = paddle.nn.loss.CrossEntropyLoss()  
+    # accuracy评价指标
+    metric = paddle.metric.Accuracy()  
+    test(model,criterion,metric,dev_data_loader,test_data_loader)
 
 def test(model,criterion,metric,dev_data_loader,test_data_loader):
-    params_path = '../checkpoint/model_state.pdparams'
+    params_path = './checkpoint/model_state.pdparams'
     if params_path and os.path.isfile(params_path):
         # 加载模型参数
         state_dict = paddle.load(params_path)
@@ -182,4 +191,5 @@ def test(model,criterion,metric,dev_data_loader,test_data_loader):
     evaluate(model, criterion, metric, test_data_loader)
 
 if __name__== "__main__" :
+    paddle.device.set_device('gpu:0')
     main()
