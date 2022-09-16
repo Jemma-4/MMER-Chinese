@@ -32,8 +32,8 @@ def handle_uploaded_audio(f):
         Audio.objects.create(audio_md5=md5_val, audio_path=audio_path)
         result['msg'] = 'upload success'
         # 开线程防止阻塞
-        new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
-        new_thread.start()
+    new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
+    new_thread.start()
     return result
 
 
@@ -43,10 +43,11 @@ def process_audio_test(md5_val):
 
     audio_path = get_audio_path(md5_val)
     response = requests.post(audio_reco_url, files={'audio': open(audio_path, 'rb')})
-    audio_text = response.json()['result']
-    response = requests.post(text_emo_url, data={'text': audio_text})
-    text_emo = response.json()['emo'][0]
+    audio_text = response.json()['result'].split('，')
+    response = requests.post(text_emo_url, data={'text_list': json.dumps(audio_text)})
+    text_emo = response.json()['emo']
     audio = Audio.objects.filter(audio_md5=md5_val)[0]
+    print(audio_text, text_emo)
     audio.emotion_tag = text_emo
     audio.rec_text = audio_text
     audio.save()
@@ -62,7 +63,7 @@ def get_audio_path(md5_val):
 
 def get_audio_result(md5_val):
     audio = Audio.objects.filter(audio_md5=md5_val)[0]
-    return audio.emotion_tag, audio.rec_text
+    return json.loads(audio.emotion_tag.replace("'", '"')), json.loads(audio.rec_text.replace("'", '"'))
 
 
 def audio_exist(md5_val):
