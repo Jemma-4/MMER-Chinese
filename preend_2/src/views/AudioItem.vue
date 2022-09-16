@@ -47,7 +47,12 @@
         <el-button type="primary" @click="onSubmit">提交</el-button>
       </div>
 
+      <div v-show="!recUpload" style="height: 100%; padding-top: 100px">
+        提示信息：请您尽可能真实详尽地描述出您当前的感受。
+      </div>
+
       <div
+        v-if="recUpload"
         v-loading="!processReady"
         element-loading-text="模型处理中"
         element-loading-spinner="el-icon-loading"
@@ -78,6 +83,7 @@ export default {
       recStart: false,
       recPause: false,
       recEnd: false,
+      recUpload:false,
       recBtnText: "录音",
       processReady: true,
       audioMD5: "",
@@ -206,6 +212,7 @@ export default {
     },
     // 上传wav格式录音文件，此接口以后要调整到父级页面
     uploadProcess() {
+      this.recUpload = true 
       if (this.recorder) {
         this.uploadProgress();
         let blob = this.recorder.getWAVBlob();
