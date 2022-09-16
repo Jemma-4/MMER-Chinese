@@ -16,12 +16,14 @@ pip install -r requirements.txt
 | video_md5  | 视频的MD5值 | varchar(32)  |
 | video_path | 视频地址    | varchar(200) |
 
-| 字段名        | 意义      | 类型           |
-|------------|---------|--------------|
-| audio_md5  | 视频的MD5值 | varchar(32)  |
-| audio_path | 视频地址    | varchar(200) |
+| 字段名      | 意义         | 类型         |
+| ----------- | ------------ | ------------ |
+| audio_md5   | 音频的MD5值  | varchar(32)  |
+| audio_path  | 音频地址     | varchar(200) |
+| emotion_tag | 情绪标签     | varchar(20)  |
+| rec_text    | 识别出的文字 | varchar(200) |
 
-创建数据库后，执行迁移脚本，在数据库中创建表
+创建数据库后，执行迁移脚本，在数据库中创建表。<font style="color:red">只要model文件发生改变</font>的时候都运行以下命令，保证数据库正常运行。
 ```
 python manage.py makemigrations myapp
 python manage.py migrate myapp
