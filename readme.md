@@ -22,7 +22,7 @@
 
 + [MER配置](./MER/readme.md)
 
-+ [前端配置](./preend_2/readme.md)
++ [前端配置](./preend_2/README.md)
 
 + 语音识别服务配置
 

@@ -32,8 +32,8 @@ def handle_uploaded_audio(f):
         Audio.objects.create(audio_md5=md5_val, audio_path=audio_path)
         result['msg'] = 'upload success'
         # 开线程防止阻塞
-    new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
-    new_thread.start()
+        new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
+        new_thread.start()
     return result
 
 

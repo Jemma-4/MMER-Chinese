@@ -34,7 +34,7 @@
     <!-- 预测结果显示与标注模块 -->
     <div style="height: 70%">
       <div v-show="processReady" style="height: 100%">
-        <p class="result">初步判断：{{ resultData["result"] }}</p>
+        <!-- <p class="result">初步判断：{{ resultData["result"] }}</p> -->
         <div v-for="item in textFromAudio" :key="item.id">
           <tag-item
             :id="item.id"
@@ -44,7 +44,7 @@
           />
         </div>
 
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="onSubmit">提交</el-button>
       </div>
 
       <div
@@ -79,13 +79,11 @@ export default {
       recPause: false,
       recEnd: false,
       recBtnText: "录音",
-      resultData: "",
       processReady: true,
       audioMD5: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
       fileList: [],
-      formInline: { tag: "" },
       taglist: [
         { id: 1, tag: "开心" },
         { id: 2, tag: "惊讶" },
@@ -246,7 +244,10 @@ export default {
         }).then((res) => {
           if (res.data.ok != 0) {
             that.audio_url = baseurl + "playAudio/?audioMD5=" + audioMD5;
-            that.resultData = res.data.data;
+            var resultData = res.data.data;
+            that.emoFromText = resultData.tag;
+            that.textFromAudio = resultData.text;
+            console.log(that.textFromAudio, that.emoFromText)
             that.processReady = true;
             clearInterval(interval);
 
@@ -271,8 +272,8 @@ export default {
           baseurl +
           "tagAudio/?audioMD5=" +
           this.audioMD5 +
-          "&tag=" +
-          this.formInline.tag,
+          "&tag=" + ''
+          
       }).then((res) => {
         if (res.data.ok != 0) {
           this.$message({

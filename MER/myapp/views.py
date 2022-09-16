@@ -106,7 +106,10 @@ def getAudioResult(request):
         emotion_tag, rec_text = get_audio_result(str(request.GET.get('audioMD5')))
         if emotion_tag is not None:
             response['ok'] = 1
-            response['data'] = {'tag': emotion_tag, 'text': rec_text}
+            response['data'] = {
+                'tag': emotion_tag,
+                'text': [{'id': i, 'text': text} for (i, text) in enumerate(rec_text)]
+            }
     except Exception as e:
         print(e)
         response['msg'] = str(e)
