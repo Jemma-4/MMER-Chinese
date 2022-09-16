@@ -1,8 +1,44 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{ backgroundImage: 'url(' + bg_list[bg_index] + ')' }">
     <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      bg_index: 0,
+      timer: null,
+      bg_list: [
+        "https://newids.seu.edu.cn/authserver/custom/images/main2.jpg",
+        "https://newids.seu.edu.cn/authserver/custom/images/main3.jpg",
+        "https://newids.seu.edu.cn/authserver/custom/images/main4.jpg",
+        "https://newids.seu.edu.cn/authserver/custom/images/main5.jpg",
+        "https://newids.seu.edu.cn/authserver/custom/images/main6.jpg",
+        "https://newids.seu.edu.cn/authserver/custom/images/main7.jpg",
+      ],
+    };
+  },
+  methods: {
+    randomBg: function () {
+      this.bg_index = Math.floor(Math.random()*6)
+    },
+  },
+  //调用
+  mounted() {
+    this.timer = setInterval(() => {
+      setTimeout(this.randomBg);
+    }, 5000);
+  },
+
+  //页面切除后解除定时
+  beforeDestroy() {
+    clearInterval(this.timer);
+    this.timer = null;
+  },
+};
+</script>
 
 <style>
 html,
@@ -29,7 +65,6 @@ body {
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
-  background: #000000 url(./assets/images/bg.jpg) center top;
   background-size: cover;
   color: #666;
   font-size: 0.1rem;

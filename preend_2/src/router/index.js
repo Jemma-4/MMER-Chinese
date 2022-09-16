@@ -2,24 +2,24 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Upload from '../views/upload.vue'
 import About from '../views/About.vue'
-import Audio from '../views/Audio.vue'
+import AudioItem from '../views/AudioItem.vue'
+import TextEmo from '../views/TextEmo.vue'
 
 Vue.use(VueRouter)
-// const originalPush = VueRouter.prototype.push
-// VueRouter.prototype.push = function push(location) {
-//   return originalPush.call(this, location).catch(err => err)
-// }
+    // const originalPush = VueRouter.prototype.push
+    // VueRouter.prototype.push = function push(location) {
+    //   return originalPush.call(this, location).catch(err => err)
+    // }
 
-const routes = [
-    {
-      path: '/',
-      name: 'Default',
-      redirect: '/audio'
+const routes = [{
+        path: '/',
+        name: 'Default',
+        redirect: '/audio'
     },
     {
-      path:'/upload',
-      name:'Upload',
-      component: Upload
+        path: '/upload',
+        name: 'Upload',
+        component: Upload
     },
     {
         path: '/home',
@@ -36,15 +36,15 @@ const routes = [
     }, //预览页
     {
         path: '/audio',
-        name: 'Audio',
-        component: Audio
+        name: 'TextEmo',
+        component: TextEmo
     }
 ]
 
-const router = new VueRouter({  
-  mode:"history",
-  base: process.env.BASE_URL,
-  routes,
+const router = new VueRouter({
+    mode: "history",
+    base: process.env.BASE_URL,
+    routes,
 })
 
 export default router
