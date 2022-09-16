@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <div style="height: 30%">
+    <div style="height: 40%">
       <p class="question">问题{{ id }} : {{ question }}</p>
       <el-button @click="recordStatusChange" v-if="!this.recEnd">{{
         recBtnText
@@ -24,7 +24,7 @@
       </el-upload>
 
       <h2 class="tip">录音时长：{{ duration }}s</h2>
-      <div v-show="processReady">
+      <div v-if="processReady">
         <audio controls>
           <source :src="audio_url" />
         </audio>
@@ -32,14 +32,14 @@
     </div>
 
     <!-- 预测结果显示与标注模块 -->
-    <div style="height: 70%">
+    <div style="height: 60%">
       <div v-show="processReady" style="height: 100%">
         <!-- <p class="result">初步判断：{{ resultData["result"] }}</p> -->
         <div v-for="item in textFromAudio" :key="item.id">
           <tag-item
             :id="item.id"
             :textToTag="item.text"
-            :tagFromModel="getLabelFromText(emoFromText[item.id - 1])"
+            :tagFromModel="getLabelFromText(emoFromText[item.id])"
             @tagFromUser="getTagFromUser"
           />
         </div>
@@ -85,7 +85,7 @@ export default {
       recEnd: false,
       recUpload:false,
       recBtnText: "录音",
-      processReady: true,
+      processReady: false,
       audioMD5: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
@@ -254,7 +254,7 @@ export default {
             var resultData = res.data.data;
             that.emoFromText = resultData.tag;
             that.textFromAudio = resultData.text;
-            console.log(that.textFromAudio, that.emoFromText)
+            console.log(that.emoFromText, resultData.tag, resultData, '1111')
             that.processReady = true;
             clearInterval(interval);
 
