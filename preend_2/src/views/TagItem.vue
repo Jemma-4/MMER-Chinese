@@ -12,7 +12,7 @@
       </el-radio-button>
     </el-radio-group>
     <el-button v-show="!startLabel" @click="onStart">标注</el-button>
-    <el-button v-show="startLabel" @click="onBack">返回</el-button>
+    <el-button v-show="startLabel" @click="onBack">确定</el-button>
   </div>
 </template>
 
