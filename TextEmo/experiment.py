@@ -192,22 +192,8 @@ def test(model,criterion,metric,dev_data_loader,test_data_loader):
     # 对测试集进行评估
     evaluate(model, criterion, metric, test_data_loader)
 
-def predict(text_emo):
-
-    # 加载模型和tokenizer
-    model = ppnlp.transformers.NeZhaForSequenceClassification.from_pretrained('nezha-large-wwm-chinese', num_classes=6)
-    tokenizer =  ppnlp.transformers.NeZhaTokenizer.from_pretrained('nezha-large-wwm-chinese')
-
-    # 加载训练好的模型参数
-    params_path = './checkpoint/model_state.pdparams'
-    if params_path and os.path.isfile(params_path):
-        # 加载模型参数
-        state_dict = paddle.load(params_path)
-        model.set_dict(state_dict)
-        print("Loaded parameters from %s" % params_path)
+def predict(text_emo,model,tokenizer,label_map):
     batch_size = 1
-    label_map = ['happy', 'sad', 'neutral', 'fear', 'angry', 'surprise']
-
     # 分词 + 向量化
     examples = []
     for text in text_emo:
