@@ -1,6 +1,6 @@
 <template>
   <div style="height: 100%">
-    <div style="height: 30%">
+    <div style="height: 40%">
       <p class="question">问题{{ id }} : {{ question }}</p>
       <el-button @click="recordStatusChange" v-if="!this.recEnd">{{
         recBtnText
@@ -24,7 +24,7 @@
       </el-upload>
 
       <h2 class="tip">录音时长：{{ duration }}s</h2>
-      <div v-show="processReady">
+      <div v-if="processReady">
         <audio controls>
           <source :src="audio_url" />
         </audio>
@@ -32,19 +32,19 @@
     </div>
 
     <!-- 预测结果显示与标注模块 -->
-    <div style="height: 70%">
+    <div style="height: 60%">
       <div v-show="processReady" style="height: 100%">
-        <p class="result">初步判断：{{ resultData["result"] }}</p>
+        <!-- <p class="result">初步判断：{{ resultData["result"] }}</p> -->
         <div v-for="item in textFromAudio" :key="item.id">
           <tag-item
             :id="item.id"
             :textToTag="item.text"
-            :tagFromModel="getLabelFromText(emoFromText[item.id - 1])"
+            :tagFromModel="getLabelFromText(emoFromText[item.id])"
             @tagFromUser="getTagFromUser"
           />
         </div>
 
-        <el-button type="primary" @click="onSubmit">查询</el-button>
+        <el-button type="primary" @click="onSubmit">提交</el-button>
       </div>
 
       <div v-show="!recUpload" style="height: 100%; padding-top: 100px">
@@ -85,13 +85,11 @@ export default {
       recEnd: false,
       recUpload:false,
       recBtnText: "录音",
-      resultData: "",
-      processReady: true,
+      processReady: false,
       audioMD5: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
       fileList: [],
-      formInline: { tag: "" },
       taglist: [
         { id: 1, tag: "开心" },
         { id: 2, tag: "惊讶" },
@@ -253,7 +251,10 @@ export default {
         }).then((res) => {
           if (res.data.ok != 0) {
             that.audio_url = baseurl + "playAudio/?audioMD5=" + audioMD5;
-            that.resultData = res.data.data;
+            var resultData = res.data.data;
+            that.emoFromText = resultData.tag;
+            that.textFromAudio = resultData.text;
+            console.log(that.emoFromText, resultData.tag, resultData, '1111')
             that.processReady = true;
             clearInterval(interval);
 
@@ -278,8 +279,8 @@ export default {
           baseurl +
           "tagAudio/?audioMD5=" +
           this.audioMD5 +
-          "&tag=" +
-          this.formInline.tag,
+          "&tag=" + ''
+          
       }).then((res) => {
         if (res.data.ok != 0) {
           this.$message({
