@@ -86,7 +86,7 @@ export default {
       recUpload:false,
       recBtnText: "录音",
       resultData: "",
-      processReady: false,
+      processReady: true,
       audioMD5: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
