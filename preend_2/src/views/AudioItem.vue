@@ -1,7 +1,16 @@
 <template>
   <div style="height: 100%">
-    <div style="height: 40%">
+    <div class="question-line">
       <p class="question">问题{{ id }} : {{ question }}</p>
+      <div class="mode-line">
+        <el-button @click="inputMode=0;processReady=false" 
+        :class="inputMode==0?'active':'default'">文本</el-button>
+        <el-button @click="inputMode=1;processReady=false"
+        :class="inputMode==1?'active':'default'">语音</el-button>
+      </div>
+    </div>
+
+    <div v-show="inputMode==1" style="padding-top:1%;height: 25%;">
       <el-button @click="recordStatusChange" v-if="!this.recEnd">{{
         recBtnText
       }}</el-button>
@@ -31,9 +40,23 @@
       </div>
     </div>
 
+    <div v-show="inputMode==0" class="text-line"> 
+      <el-input
+        type="textarea"
+        placeholder="请输入内容"
+        v-model="textInput"
+        maxlength="128"
+        show-word-limit
+        :autosize="{ minRows:4, maxRows: 4}"
+        class="text-input"
+      >
+      </el-input>
+      <el-button style="margin-top:4%;" @click="uploadTextSuccess">上传</el-button>
+    </div>
+
     <!-- 预测结果显示与标注模块 -->
     <div style="height: 60%">
-      <div v-show="processReady" style="height: 100%">
+      <div v-if="processReady" style="height: 100%;padding-left:5%;padding-right:5%;padding-top:1%;">
         <!-- <p class="result">初步判断：{{ resultData["result"] }}</p> -->
         <div v-for="item in textFromAudio" :key="item.id">
           <tag-item
@@ -83,9 +106,11 @@ export default {
       recStart: false,
       recPause: false,
       recEnd: false,
-      recUpload:false,
+      recUpload: false,
       recBtnText: "录音",
       processReady: false,
+      inputMode: 0, //0：默认文字上传；1：语音上传
+      textInput: "",
       audioMD5: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
@@ -212,7 +237,7 @@ export default {
     },
     // 上传wav格式录音文件，此接口以后要调整到父级页面
     uploadProcess() {
-      this.recUpload = true 
+      this.recUpload = true;
       if (this.recorder) {
         this.uploadProgress();
         let blob = this.recorder.getWAVBlob();
@@ -254,7 +279,7 @@ export default {
             var resultData = res.data.data;
             that.emoFromText = resultData.tag;
             that.textFromAudio = resultData.text;
-            console.log(that.emoFromText, resultData.tag, resultData, '1111')
+            console.log(that.emoFromText, resultData.tag, resultData, "1111");
             that.processReady = true;
             clearInterval(interval);
 
@@ -275,12 +300,7 @@ export default {
     //提交音频标注 Todo 直接提交列表this.emoFromText+题号id
     onSubmit() {
       get({
-        url:
-          baseurl +
-          "tagAudio/?audioMD5=" +
-          this.audioMD5 +
-          "&tag=" + ''
-          
+        url: baseurl + "tagAudio/?audioMD5=" + this.audioMD5 + "&tag=" + "",
       }).then((res) => {
         if (res.data.ok != 0) {
           this.$message({
@@ -291,6 +311,25 @@ export default {
         }
       });
     },
+    // todo 收集前端的文本输入框数据 获取和提交音频一样的结果数据
+    uploadTextSuccess() {
+      // textFromAudio 放入后端分句结果
+      // emoFromText 放入分类结果
+
+      // 测试数据
+      this.textFromAudio = [
+        { id: 0, text: "我觉得今天天气很好，阳光明媚。" },
+        { id: 1, text: "就像我的心情一样舒畅。" },
+        { id: 2, text: "我觉得今天的天气不是很好，阴沉沉的。" },
+        {
+          id: 3,
+          text: "我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。",
+        },
+      ];
+      this.emoFromText = ["开心", "开心", "伤心", "伤心"];
+      this.processReady=true
+      console.log("haoye")
+    },
     // 从返回的标签文本转换对应的数字标识 tag
     getLabelFromText(emo_text) {
       for (var i = 0; i < this.taglist.length; i++) {
@@ -298,8 +337,8 @@ export default {
       }
     },
     getTagFromUser(val) {
-      this.emoFromText[val.id-1]=val.tag
-      console.log(this.emoFromText)
+      this.emoFromText[val.id - 1] = val.tag;
+      console.log(this.emoFromText);
     },
   },
 };
@@ -314,19 +353,66 @@ export default {
   padding-top: 5%;
 }
 
-.question,
+.question-line {
+  height: 15%;
+  padding-top:3%;
+  padding-left:3%;
+  margin-bottom:2%;
+}
+.mode-line{
+  width: 30%;
+  float: right;
+  display: inline;
+}
+
+.text-line{
+  height: 25%;
+}
+
+.text-input{
+  width:68%;
+  margin-top:16px;
+  margin-left:2%;
+  float: left;
+}
+
+
+.question {
+  font-size: 18px;
+  margin:0px;
+  color: black;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.15), 0 0 10px rgba(0, 0, 0, 0.15);
+  display: inline;
+  width: 70%;
+  float: left;
+}
 .result {
   font-size: 18px;
   margin: 24px;
+  color: black;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.15), 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .tip {
   margin: 20px;
 }
 
+.active{
+  background:#ecf5ff !important;
+  color:#409EFF;
+}
+
+.default{
+
+}
 >>> .el-button {
   border: 0px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 0px;
+}
+
+>>> .el-textarea__inner ,
+>>> .el-textarea .el-input__count{
+  background: rgba(0,0,0,0);
 }
 </style>

@@ -11,12 +11,9 @@
       <el-carousel-item
         v-for="item in questionList"
         :key="item.id"
-        style="background: white"
+        style="background: rgba(255, 255, 255, 0.85)"
       >
-        <audio-item
-          :id="item.id"
-          :question="item.question"
-        />
+        <audio-item :id="item.id" :question="item.question" />
       </el-carousel-item>
     </el-carousel>
   </div>
@@ -47,7 +44,6 @@ export default {
             "请描述一下你最近的心情，如果用一种颜色来形容的话，会是什么颜色？",
         },
       ],
-      
     };
   },
   methods: {},
@@ -56,11 +52,14 @@ export default {
 
 <style scoped>
 .title {
-  font-size: 32px;
+  font-size: 36px;
   margin: 0px;
   line-height: 100%;
   height: 100px;
   line-height: 100px;
+  color: white;
+  text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 10px rgba(0,0,0,0.45);
+  font-weight: bold;
 }
 
 .question,

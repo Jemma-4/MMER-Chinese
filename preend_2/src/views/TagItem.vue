@@ -76,32 +76,32 @@ export default {
 <style scoped>
 .tag1 {
   color: pink;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 .tag2 {
   color: orange;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 .tag3 {
   color: black;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 .tag4 {
   color: red;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 .tag5 {
   color: blue;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 .tag6 {
   color: gray;
-  font-size: 20px;
+  font-size: 18px;
   display: inline;
 }
 
