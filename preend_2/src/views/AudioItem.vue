@@ -3,7 +3,7 @@
     <div class="question-line">
       <p class="question">问题{{ id }} : {{ question }}</p>
       <div class="mode-line">
-        <el-button @click="inputMode=0;processReady=false" 
+        <el-button @click="inputMode=0;processReady=false"
         :class="inputMode==0?'active':'default'">文本</el-button>
         <el-button @click="inputMode=1;processReady=false"
         :class="inputMode==1?'active':'default'">语音</el-button>
@@ -19,13 +19,13 @@
         >结束</el-button
       >
       <el-button @click="playRecord" v-if="this.recEnd">播放</el-button>
-      <el-button @click="uploadProcess" v-if="this.recEnd">上传</el-button>
+      <el-button @click="uploadAudioProcess" v-if="this.recEnd">上传</el-button>
       <el-upload
         :action="upload_url"
         :multiple="false"
         :file-list="fileList"
-        :on-success="uploadSuccess"
-        :on-progress="uploadProgress"
+        :on-success="uploadAudioSuccess"
+        :on-progress="uploadAudioProgress"
         ref="upload"
         style="display: inline-block; margin-left: 10px"
       >
@@ -40,10 +40,10 @@
       </div>
     </div>
 
-    <div v-show="inputMode==0" class="text-line"> 
+    <div v-show="inputMode==0" class="text-line">
       <el-input
         type="textarea"
-        placeholder="请输入内容"
+        placeholder="请输入内容，用。分隔句子"
         v-model="textInput"
         maxlength="128"
         show-word-limit
@@ -51,7 +51,7 @@
         class="text-input"
       >
       </el-input>
-      <el-button style="margin-top:4%;" @click="uploadTextSuccess">上传</el-button>
+      <el-button style="margin-top:4%;" @click="uploadTextProcess">上传</el-button>
     </div>
 
     <!-- 预测结果显示与标注模块 -->
@@ -62,7 +62,7 @@
           <tag-item
             :id="item.id"
             :textToTag="item.text"
-            :tagFromModel="getLabelFromText(emoFromText[item.id])"
+            :tagFromModel="getLabelFromText(emoFromText[item.id -1 ])"
             @tagFromUser="getTagFromUser"
           />
         </div>
@@ -112,6 +112,7 @@ export default {
       inputMode: 0, //0：默认文字上传；1：语音上传
       textInput: "",
       audioMD5: "",
+      textID: "",
       audio_url: "",
       upload_url: baseurl + "uploadAudio/",
       fileList: [],
@@ -236,14 +237,14 @@ export default {
       this.recorder && this.recorder.play();
     },
     // 上传wav格式录音文件，此接口以后要调整到父级页面
-    uploadProcess() {
+    uploadAudioProcess() {
       this.recUpload = true;
       if (this.recorder) {
-        this.uploadProgress();
+        this.uploadAudioProgress();
         let blob = this.recorder.getWAVBlob();
         let formData = new FormData();
         var that = this;
-        formData.append("file", blob); //后续需要改，传多个音频
+        formData.append("file", blob);
 
         post({
           url: baseurl + "uploadAudio/",
@@ -257,14 +258,14 @@ export default {
               duration: 0,
             });
 
-            that.uploadSuccess(res.data);
+            that.uploadAudioSuccess(res.data);
           }
           // console.log(that.audioMD5);
         });
       }
     },
 
-    uploadSuccess(response) {
+    uploadAudioSuccess(response) {
       this.$refs.upload.clearFiles();
       var audioMD5 = response.result.data;
       this.audioMD5 = audioMD5;
@@ -279,7 +280,6 @@ export default {
             var resultData = res.data.data;
             that.emoFromText = resultData.tag;
             that.textFromAudio = resultData.text;
-            console.log(that.emoFromText, resultData.tag, resultData, "1111");
             that.processReady = true;
             clearInterval(interval);
 
@@ -294,42 +294,114 @@ export default {
         });
       }, 1000);
     },
-    uploadProgress() {
+
+    uploadAudioProgress() {
       this.processReady = false;
     },
-    //提交音频标注 Todo 直接提交列表this.emoFromText+题号id
-    onSubmit() {
-      get({
-        url: baseurl + "tagAudio/?audioMD5=" + this.audioMD5 + "&tag=" + "",
-      }).then((res) => {
-        if (res.data.ok != 0) {
-          this.$message({
-            title: "成功",
-            message: "标注成功",
-            type: "success",
-          });
-        }
-      });
+
+    uploadTextProcess() {
+      if (this.textInput) {
+        let formData = new FormData();
+        var that = this;
+        formData.append("text", this.textInput); 
+
+        post({
+          url: baseurl + "uploadText/",
+          data: formData,
+        }).then((res) => {
+          if (res.data.ok != 0) {
+            that.$message({
+              title: "提示",
+              message: "上传完毕，文本处理中...",
+              duration: 0,
+            });
+
+            that.uploadTextSuccess(res.data);
+          }
+        });
+      }
     },
+
     // todo 收集前端的文本输入框数据 获取和提交音频一样的结果数据
-    uploadTextSuccess() {
-      // textFromAudio 放入后端分句结果
-      // emoFromText 放入分类结果
+    uploadTextSuccess(response) {
+      var textID = response.result.data;
+      this.textID = textID;
+      var that = this;
+
+      var interval = setInterval(function () {
+        get({
+          url: baseurl + "getTextResult/?textID=" + textID,
+        }).then((res) => {
+          if (res.data.ok != 0) {
+            var resultData = res.data.data;
+            that.emoFromText = resultData.tag;
+            that.textFromAudio = resultData.text;
+            that.processReady = true;
+            clearInterval(interval);
+
+            that.$message.closeAll();
+            that.$message({
+              title: "成功",
+              message: "处理完成",
+              type: "success",
+            });
+          }
+          // console.log(audioMD5);
+        });
+      }, 1000);
 
       // 测试数据
-      this.textFromAudio = [
-        { id: 0, text: "我觉得今天天气很好，阳光明媚。" },
-        { id: 1, text: "就像我的心情一样舒畅。" },
-        { id: 2, text: "我觉得今天的天气不是很好，阴沉沉的。" },
-        {
-          id: 3,
-          text: "我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。",
-        },
-      ];
-      this.emoFromText = ["开心", "开心", "伤心", "伤心"];
-      this.processReady=true
-      console.log("haoye")
+      // this.textFromAudio = [
+      //   { id: 0, text: "我觉得今天天气很好，阳光明媚。" },
+      //   { id: 1, text: "就像我的心情一样舒畅。" },
+      //   { id: 2, text: "我觉得今天的天气不是很好，阴沉沉的。" },
+      //   {
+      //     id: 3,
+      //     text: "我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。我觉得今天的天气不是很好，阴沉沉的，我觉得今天的天气不是很好，阴沉沉的。",
+      //   },
+      // ];
+      // this.emoFromText = ["开心", "开心", "伤心", "伤心"];
+      // this.processReady=true
+      // console.log("haoye")
     },
+
+    //提交音频标注 Todo 后续再根据需求补充题号id相关业务
+    onSubmit() {
+      if(this.inputMode == 1){
+        get({
+          url:
+            baseurl +
+            "tagAudio/?audioMD5=" +
+            this.audioMD5 +
+            "&tag=" + this.emoFromText
+        }).then((res) => {
+          if (res.data.ok != 0) {
+            this.$message({
+              title: "成功",
+              message: "标注成功",
+              type: "success",
+            });
+          }
+        });
+      }else if(this.inputMode == 0){
+        get({
+          url:
+            baseurl +
+            "tagText/?textID=" +
+            this.textID +
+            "&tag=" + this.emoFromText
+        }).then((res) => {
+          if (res.data.ok != 0) {
+            this.$message({
+              title: "成功",
+              message: "标注成功",
+              type: "success",
+            });
+          }
+        });
+      }
+    },
+    
     // 从返回的标签文本转换对应的数字标识 tag
     getLabelFromText(emo_text) {
       for (var i = 0; i < this.taglist.length; i++) {

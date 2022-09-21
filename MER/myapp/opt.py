@@ -1,7 +1,7 @@
 # 此文件为myapp配置文件
 # 公共配置项
-temproot = './myapp/static/temp/'
-videoroot = './myapp/static/video/'
-audioroot = './myapp/static/audio/'
+temproot = './myapp/statics/temp/'
+videoroot = './myapp/statics/video/'
+audioroot = './myapp/statics/audio/'
 
 

@@ -8,8 +8,13 @@ urlpatterns = [
     path('getChartData/', views.getChartData,),
     path('generFakeData/', views.generFakeData,),
     path('recognizeLongSpeech/', views.recognizeLongSpeech,),
+
     path('uploadAudio/', views.uploadAudio,),
     path('getAudioResult/', views.getAudioResult,),
     path('playAudio/', views.playAudio,),
-    path('tagAudio/', views.tagAudio)
+    path('tagAudio/', views.tagAudio,),
+
+    path('uploadText/', views.uploadText,),
+    path('getTextResult/', views.getTextResult,),
+    path('tagText/', views.tagText,),
 ]

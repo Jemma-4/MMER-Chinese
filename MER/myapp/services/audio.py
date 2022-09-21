@@ -14,6 +14,7 @@ from myapp import opt
 audio_reco_url = 'http://127.0.0.1:5000/recognition'
 text_emo_url = 'http://127.0.0.1:2233/textemo'
 
+
 def handle_uploaded_audio(f):
     result = {}
     # 创建临时文件
@@ -32,15 +33,12 @@ def handle_uploaded_audio(f):
         Audio.objects.create(audio_md5=md5_val, audio_path=audio_path)
         result['msg'] = 'upload success'
         # 开线程防止阻塞
-        new_thread = MyThread(target=process_audio_test, args=(md5_val,), name='thread %s' % md5_val)
+        new_thread = MyThread(target=process_audio, args=(md5_val,), name='thread %s' % md5_val)
         new_thread.start()
     return result
 
 
-def process_audio_test(md5_val):
-    # json_file = md5_val + '.json'
-    # time.sleep(5)
-
+def process_audio(md5_val):
     audio_path = get_audio_path(md5_val)
     response = requests.post(audio_reco_url, files={'audio': open(audio_path, 'rb')})
     audio_text = response.json()['result'].split('，')
@@ -51,9 +49,6 @@ def process_audio_test(md5_val):
     audio.emotion_tag = text_emo
     audio.rec_text = audio_text
     audio.save()
-    # data = {'result': '惆怅'}
-
-    # json.dump(data, open(opt.audioroot + '%s' % json_file, 'w'))
 
 
 def get_audio_path(md5_val):
@@ -75,6 +70,7 @@ def audio_exist(md5_val):
 
 
 def tag_audio(md5_val, tag):
+    print(md5_val, tag)
     audio = Audio.objects.filter(audio_md5=md5_val)[0]
     audio.emotion_tag = tag
     audio.save()
