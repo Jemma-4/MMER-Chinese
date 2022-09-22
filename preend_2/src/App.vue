@@ -62,7 +62,7 @@ export default {
   mounted() {
     this.timer = setInterval(() => {
       setTimeout(this.randomBg);
-    }, 5000);
+    }, 10000);
   },
 
   //页面切除后解除定时

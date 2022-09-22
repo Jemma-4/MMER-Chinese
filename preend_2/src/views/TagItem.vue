@@ -75,12 +75,12 @@ export default {
 
 <style scoped>
 .tag1 {
-  color: pink;
+  color: rgb(209, 161, 170);
   font-size: 18px;
   display: inline;
 }
 .tag2 {
-  color: orange;
+  color: rgb(205, 133, 0);
   font-size: 18px;
   display: inline;
 }
@@ -90,12 +90,12 @@ export default {
   display: inline;
 }
 .tag4 {
-  color: red;
+  color: rgb(181, 1, 1);
   font-size: 18px;
   display: inline;
 }
 .tag5 {
-  color: blue;
+  color: rgb(1, 168, 198);
   font-size: 18px;
   display: inline;
 }

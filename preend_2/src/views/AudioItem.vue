@@ -51,7 +51,7 @@
         class="text-input"
       >
       </el-input>
-      <el-button style="margin-top:4%;" @click="uploadTextProcess">上传</el-button>
+      <el-button style="margin-top:4%;float:right;margin-right:10%;text-align:right;" @click="uploadTextProcess">上传</el-button>
     </div>
 
     <!-- 预测结果显示与标注模块 -->
@@ -64,12 +64,12 @@
             :textToTag="item.text"
             :tagFromModel="getLabelFromText(emoFromText[item.id -1 ])"
             @tagFromUser="getTagFromUser"
+            style="margin-bottom:4px;"
           />
         </div>
 
-        <el-button type="primary" @click="onSubmit">提交</el-button>
+        <el-button type="primary" @click="onSubmit" style="margin-top:4px;">提交</el-button>
       </div>
-
       <div v-show="!recUpload" style="height: 100%; padding-top: 100px">
         提示信息：请您尽可能真实详尽地描述出您当前的感受。
       </div>
@@ -434,7 +434,9 @@ export default {
 .mode-line{
   width: 30%;
   float: right;
+  text-align: right;
   display: inline;
+  padding-right:10%;
 }
 
 .text-line{
@@ -444,7 +446,7 @@ export default {
 .text-input{
   width:68%;
   margin-top:16px;
-  margin-left:2%;
+  margin-left:3%;
   float: left;
 }
 
@@ -457,6 +459,7 @@ export default {
   display: inline;
   width: 70%;
   float: left;
+  text-align: left;
 }
 .result {
   font-size: 18px;
@@ -480,7 +483,7 @@ export default {
 >>> .el-button {
   border: 0px;
   background: rgba(0, 0, 0, 0.15);
-  border-radius: 0px;
+  border-radius: 6px;
 }
 
 >>> .el-textarea__inner ,

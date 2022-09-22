@@ -5,8 +5,8 @@
     <el-carousel
       :autoplay="false"
       trigger="click"
-      height="500px"
-      style="top: 4%; left: 15%; width: 70%; border-radius: 10px"
+      height="520px"
+      style="top: 2%; left: 15%; width: 70%; border-radius: 10px"
     >
       <el-carousel-item
         v-for="item in questionList"
