@@ -4,7 +4,7 @@ import Upload from '../views/upload.vue'
 import About from '../views/About.vue'
 import AudioItem from '../views/AudioItem.vue'
 import TextEmo from '../views/TextEmo.vue'
-import ATMR from '../views/ATMR.vue'
+import Question from '../views/Question.vue'
 
 Vue.use(VueRouter)
     // const originalPush = VueRouter.prototype.push
@@ -42,8 +42,8 @@ const routes = [{
     },
     {
         path: '/question',
-        name: 'ATMR',
-        component: ATMR
+        name: 'Question',
+        component: Question
     }
 ]
 

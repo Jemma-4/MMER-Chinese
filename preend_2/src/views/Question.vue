@@ -1,9 +1,15 @@
 <template>
   <div class="block" style="height: 100%">
+    <div class="line"></div>
     <p class="title">ATMR心智系统</p>
-    <div style="height: 70%">
-      <div class="line"></div>
-      <div v-for="item in questionList" :key="item.id" class="line-icon">
+    <div class="line-label">
+      <div
+        v-for="item in questionList"
+        :key="item.id"
+        class="line-icon"
+        v-show="getShowById(item.id)"
+        @click="curId=item.id"
+      >
         <div
           :class="getClassByIdIcon(item.id)"
           style="float: left; margin-top: 1px"
@@ -15,7 +21,8 @@
           {{ item.id + 1 }}
         </div>
       </div>
-
+    </div>
+    <div style="height: 70%">
       <div class="qusition-card" v-show="!isStart">
         <div>
           说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;
@@ -586,6 +593,214 @@ export default {
             },
           ],
         },
+        {
+          id: 20,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 21,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 22,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 23,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 24,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 25,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 26,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
+        {
+          id: 27,
+          question: "如果用一种颜色来形容的话",
+          options: [
+            {
+              id: 1,
+              text: "不符合",
+            },
+            {
+              id: 2,
+              text: "有点符合",
+            },
+            {
+              id: 3,
+              text: "一般符合",
+            },
+            {
+              id: 4,
+              text: "比较符合",
+            },
+            {
+              id: 5,
+              text: "非常符合",
+            },
+          ],
+        },
       ],
     };
   },
@@ -621,6 +836,22 @@ export default {
       }
       this.isFinished = all;
     },
+    getShowById(id) {
+      let min = this.curId - 5;
+      let max = this.curId + 4;
+      if (min < 0) {
+        min = 0;
+        max = 9;
+      } else if (max >= this.questionList.length) {
+        min = this.questionList.length - 10;
+        max = this.questionList.length - 1;
+      }
+      if (id >= min && id <= max) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     onNext() {
       this.curId < this.questionList.length - 1 ? (this.curId += 1) : {};
       var music = document.getElementById("audio");
@@ -650,7 +881,7 @@ export default {
   font-size: 36px;
   margin: 0px;
   line-height: 100%;
-  height: 20%;
+  height: 10%;
   line-height: 100px;
   color: white;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.45), 0 0 10px rgba(0, 0, 0, 0.45);
@@ -746,20 +977,27 @@ export default {
   background: rgba(255, 255, 255, 0.45);
   box-shadow: 0 0 16px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 0, 0, 0.65);
   width: 2px;
-  height: 70%;
+  height: 68%;
   position: absolute;
   margin-left: 10%;
+  margin-top: 10%;
+}
+
+.line-label {
+  height: 70%;
+  position: fixed;
+  margin-left: 10%;
+  margin-top: 5%;
 }
 .line-icon {
-  margin-left: 10%;
-  margin-top: 8px;
+  margin-top: 29px;
   transform: translate(-5px);
 }
 
 .button {
   float: right;
   margin-top: 10px;
-	margin-left: 18px;
+  margin-left: 18px;
 }
 
 .start-button {
