@@ -3,21 +3,10 @@
     <div class="line"></div>
     <p class="title">ATMR心智系统</p>
     <div class="line-label">
-      <div
-        v-for="item in questionList"
-        :key="item.id"
-        class="line-icon"
-        v-show="getShowById(item.id)"
-        @click="curId=item.id"
-      >
-        <div
-          :class="getClassByIdIcon(item.id)"
-          style="float: left; margin-top: 1px"
-        ></div>
-        <div
-          :class="getClassByIdTitle(item.id)"
-          style="text-align: left; width: 10%"
-        >
+      <div v-for="item in questionList" :key="item.id" class="line-icon" v-show="getShowById(item.id)"
+        @click="curId=item.id">
+        <div :class="getClassByIdIcon(item.id)" style="float: left; margin-top: 1px"></div>
+        <div :class="getClassByIdTitle(item.id)" style="text-align: left; width: 10%">
           {{ item.id + 1 }}
         </div>
       </div>
@@ -31,778 +20,54 @@
       </div>
 
       <div class="qusition-card" v-show="isStart">
-        <div class="question-title">
-          问题{{ questionList[curId].id + 1 }}：{{
+        <div v-show="!isReport">
+          <div class="question-title">
+            问题{{ questionList[curId].id + 1 }}：{{
             questionList[curId].question
-          }}
+            }}
+          </div>
+          <audio controls style="display: none" id="audio">
+            <source :src="baseurl+'playAudio/?audioMD5='+ questionList[curId].audioMD5" />
+            <!-- <source src="https://www.runoob.com/try/demo_source/horse.mp3" /> -->
+          </audio>
+          <el-radio-group v-model="chosenList[curId]" style="width: 100%">
+            <el-radio v-for="option in questionList[curId].options" :key="option.id" :label="option.id"
+              @change="getFinished" class="option">{{ option.text }}</el-radio>
+          </el-radio-group>
+          <el-button v-show="!isFinished" @click="onNext" class="button">下一题</el-button>
+          <el-button v-show="!isFinished" @click="onLast" class="button">上一题</el-button>
+          <el-button v-show="isFinished" @click="onSubmit" class="button">提交</el-button>
         </div>
-        <audio controls style="display: none" id="audio">
-          <!-- <source :src="questionList[curId].audioMD5" /> -->
-          <source src="https://www.runoob.com/try/demo_source/horse.mp3" />
-        </audio>
-        <el-radio-group v-model="chosenList[curId]" style="width: 100%">
-          <el-radio
-            v-for="option in questionList[curId].options"
-            :key="option.id"
-            :label="option.id"
-            @change="getFinished"
-            class="option"
-            >{{ option.text }}</el-radio
-          >
-        </el-radio-group>
-        <el-button v-show="!isFinished" @click="onNext" class="button"
-          >下一题</el-button
-        >
-        <el-button v-show="!isFinished" @click="onLast" class="button"
-          >上一题</el-button
-        >
-        <el-button v-show="isFinished" @click="onSubmit" class="button"
-          >提交</el-button
-        >
       </div>
+      <bar-chart-report ref="bar_chart_report" style="margin-top:5%;"/>
+      <!-- <div class="chart-card" :style="isReport?'':'display:none;'">
+        <bar-chart-report ref="bar_chart_report" />
+      </div> -->
+
     </div>
   </div>
 </template>
 
 <script>
+import { get, post, baseurl } from '../network/request.js'
+import BarChartReport from "../components/BarChart3.vue";
 export default {
   data() {
     return {
+      baseurl: '',
       isStart: false,
       curId: 0,
       chosenList: [],
       isFinished: false,
-      questionList: [
-        {
-          id: 0,
-          question: "请描述一下你最近的心情",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 1,
-          question: "请描述一下你最近的心情",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 2,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 3,
-          question: "会是什么颜色？",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 4,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 5,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 6,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 7,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 8,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 9,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 10,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 11,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 12,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 13,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 14,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 15,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 16,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 17,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 18,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 19,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 20,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 21,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 22,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 23,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 24,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 25,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 26,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-        {
-          id: 27,
-          question: "如果用一种颜色来形容的话",
-          options: [
-            {
-              id: 1,
-              text: "不符合",
-            },
-            {
-              id: 2,
-              text: "有点符合",
-            },
-            {
-              id: 3,
-              text: "一般符合",
-            },
-            {
-              id: 4,
-              text: "比较符合",
-            },
-            {
-              id: 5,
-              text: "非常符合",
-            },
-          ],
-        },
-      ],
+      questionList: [],
+      quiz_id: 0,
+      answer_id: '',
+      isReport: false,
+
     };
+  },
+  components: {
+    BarChartReport
   },
   methods: {
     getClassByIdIcon(id) {
@@ -871,9 +136,59 @@ export default {
       //提交数据
       //chosenList存放答案 index为题号 chosenList[index]为答案
       console.log(this.chosenList);
+      var answer = []
+      for (var i = 0; i < this.chosenList.length; i++) {
+        var question = this.questionList[i];
+        var ans = [question.type, question.qid, this.chosenList[i]]
+        console.log(ans)
+        answer.push(ans)
+      }
+
+      let formData = new FormData();
+      formData.append('answer', JSON.stringify(answer));
+      formData.append('quiz_id', this.quiz_id);
+      formData.append('answer_id', this.answer_id);
+      post({
+        url: baseurl + 'uploadQuizAnswer/',
+        data: formData
+      }).then((res) => {
+        if (res.data.ok != 0) {
+          return;
+        }
+      });
+      this.genReport(answer);
     },
+    genReport(answer) {
+      var chartData = {
+        'A': 0,
+        'T': 0,
+        'M': 0,
+        'R': 0
+      }
+      for (var i = 0; i < answer.length; i++) {
+        chartData[answer[i][0]] += answer[i][2];
+      }
+      console.log(chartData);
+      this.isReport = true;
+      this.$refs.bar_chart_report.drawChart(chartData)
+    }
   },
+
+  mounted() {
+    this.baseurl = baseurl;
+    get({
+      url: baseurl + "getQuiz/",
+    }).then((res) => {
+      if (res.data.ok != 0) {
+        this.quiz_id = res.data.quiz_id;
+        this.answer_id = res.data.answer_id;
+        this.questionList = res.data.data;
+      }
+      // console.log(audioMD5);
+    });
+  }
 };
+
 </script>
 
 <style scoped>
@@ -897,6 +212,17 @@ export default {
   left: 20%;
   border-radius: 10px;
   padding: 18%;
+  padding-top: 90px;
+}
+
+.chart-card {
+  background: rgba(255, 255, 255, 0.85);
+  width: 60%;
+  height: 70%;
+  top: 20%;
+  position: absolute;
+  left: 20%;
+  border-radius: 10px;
   padding-top: 90px;
 }
 
@@ -989,6 +315,7 @@ export default {
   margin-left: 10%;
   margin-top: 5%;
 }
+
 .line-icon {
   margin-top: 29px;
   transform: translate(-5px);
@@ -1004,7 +331,7 @@ export default {
   margin-top: 70px;
 }
 
->>> .el-button {
+>>>.el-button {
   border: 0px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 6px;

@@ -3,5 +3,4 @@
 temproot = './myapp/statics/temp/'
 videoroot = './myapp/statics/video/'
 audioroot = './myapp/statics/audio/'
-
-
+atmrroot = './myapp/statics/atmr/'

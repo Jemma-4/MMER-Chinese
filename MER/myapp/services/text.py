@@ -1,14 +1,14 @@
-import uuid
 import json
 import requests
 from myapp.utils.MyThread import MyThread
+from myapp.utils.IDGenerator import randomID
 from myapp.models import Text
 
 text_emo_url = 'http://127.0.0.1:2233/textemo'
 
 def handle_uploaded_text(text):
     result = {}
-    textID = str(uuid.uuid4()).replace('-', '')
+    textID = randomID()
     text_list = []
     for t in text.split('。'):
         if t != '':

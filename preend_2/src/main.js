@@ -62,14 +62,14 @@ Vue.prototype.$axisStyle = {
     axisLabel: {
         show: true,
         textStyle: {
-            color: "#fff",
+            color: "black",
         },
     },
 
     axisLine: {
         show: true, //是否显示轴线
         lineStyle: {
-            color: "#fff", //刻度线的颜色
+            color: "black", //刻度线的颜色
         },
     },
 }

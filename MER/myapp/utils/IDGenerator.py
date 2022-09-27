@@ -2,7 +2,7 @@ import uuid
 import hashlib
 from myapp import opt
 
-# type = 1 视频 ,type = 2音频
+# 对文件抽取md5
 def extractMD5(f):
     postfix = '.' + f.name.split('.')[-1]
     if postfix == '.blob':
@@ -16,3 +16,7 @@ def extractMD5(f):
             md5.update(chunk)
     file.close()
     return md5.hexdigest(), temp_path, postfix
+
+# 对非文件使用随机id
+def randomID():
+    return str(uuid.uuid4()).replace('-', '')

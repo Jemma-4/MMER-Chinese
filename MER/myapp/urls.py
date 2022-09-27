@@ -1,20 +1,25 @@
 from django.urls import path
-from . import views
+# from . import views
+from .views import videoViews, audioViews, textViews, ATMRViews
 
 urlpatterns = [
-    path('test/', views.test, ),
-    path('uploadVideo/', views.uploadVideo,),
-    path('playVideo/', views.playVideo,),
-    path('getChartData/', views.getChartData,),
-    path('generFakeData/', views.generFakeData,),
-    path('recognizeLongSpeech/', views.recognizeLongSpeech,),
+    path('test/', videoViews.test, ),
+    path('uploadVideo/', videoViews.uploadVideo,),
+    path('playVideo/', videoViews.playVideo,),
+    path('getChartData/', videoViews.getChartData,),
+    path('generFakeData/', videoViews.generFakeData,),
 
-    path('uploadAudio/', views.uploadAudio,),
-    path('getAudioResult/', views.getAudioResult,),
-    path('playAudio/', views.playAudio,),
-    path('tagAudio/', views.tagAudio,),
+    path('recognizeLongSpeech/', audioViews.recognizeLongSpeech,),
+    path('uploadAudio/', audioViews.uploadAudio,),
+    path('getAudioResult/', audioViews.getAudioResult,),
+    path('playAudio/', audioViews.playAudio,),
+    path('tagAudio/', audioViews.tagAudio,),
 
-    path('uploadText/', views.uploadText,),
-    path('getTextResult/', views.getTextResult,),
-    path('tagText/', views.tagText,),
+    path('uploadText/', textViews.uploadText,),
+    path('getTextResult/', textViews.getTextResult,),
+    path('tagText/', textViews.tagText,),
+
+    path('getQuiz/', ATMRViews.getQuiz,),
+    path('uploadQuizAnswer/', ATMRViews.uploadQuizAnswer,),
+    path('getQuizAnswer/', ATMRViews.getQuizAnswer,),
 ]

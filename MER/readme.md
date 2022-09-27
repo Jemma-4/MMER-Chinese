@@ -32,12 +32,12 @@ python manage.py migrate myapp
 测试阶段，可以使用generFakeData请求,伪造数据
 
 ### 后端运行
-新建一个文件夹/MER/myapp/statics/，并在该文件夹下新建子文件夹temp audio video，用来存放数据，此文件夹不会被git上传
+新建一个文件夹/MER/myapp/statics/，并在该文件夹下新建子文件夹temp audio video atmr，用来存放数据。其中atmr中会存放试题数据文件。此文件夹不会被git上传
 
 ```
 python manage.py runserver
 ```
 
 ### 其他
-有部分变量命名规则和暑假开发video部分时，有差别（没时间核对），后续有空尽量统一命名规则。
+有部分变量命名规则和暑假开发video部分时，有差别（没时间统一），后续有空尽量统一命名规则。
 

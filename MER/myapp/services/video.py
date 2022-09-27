@@ -4,7 +4,7 @@ import numpy as np
 import time
 import moviepy.editor as mp
 from myapp.utils.MyThread import MyThread
-from myapp.utils.extractMD5 import extractMD5
+from myapp.utils.IDGenerator import extractMD5
 from myapp import opt
 from myapp.models import Video
 from .audio import audio_format_confirm

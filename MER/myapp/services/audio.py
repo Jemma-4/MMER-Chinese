@@ -7,7 +7,7 @@ import os
 import requests
 import json
 from myapp.utils.MyThread import MyThread
-from myapp.utils.extractMD5 import extractMD5
+from myapp.utils.IDGenerator import extractMD5
 from myapp.models import Audio
 from myapp import opt
 

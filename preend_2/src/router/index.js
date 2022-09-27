@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Upload from '../views/upload.vue'
 import About from '../views/About.vue'
-import AudioItem from '../views/AudioItem.vue'
 import TextEmo from '../views/TextEmo.vue'
 import Question from '../views/Question.vue'
 
@@ -15,7 +14,7 @@ Vue.use(VueRouter)
 const routes = [{
         path: '/',
         name: 'Default',
-        redirect: '/audio'
+        redirect: '/question'
     },
     {
         path: '/upload',
