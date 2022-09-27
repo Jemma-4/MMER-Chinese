@@ -2,24 +2,29 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { Upload, Button, Row, Select, Option, Message, Form, FormItem, Input, Loading, Carousel, CarouselItem, Card, RadioGroup, RadioButton } from 'element-ui'
+import { Upload, Button, Row, Select, Option, Message, Form, FormItem, Input, Loading, Carousel, CarouselItem, Card, Radio, RadioGroup, RadioButton, Steps, Step, Timeline, TimelineItem } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as echarts from 'echarts'
 
 Vue.config.productionTip = false
-Vue.use(Upload)
 Vue.use(Button)
-Vue.use(Row)
-Vue.use(Select)
-Vue.use(Option)
+Vue.use(Card)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
-Vue.use(Carousel)
-Vue.use(CarouselItem)
-Vue.use(Card)
-Vue.use(RadioGroup)
+Vue.use(Option)
+Vue.use(Radio)
 Vue.use(RadioButton)
+Vue.use(RadioGroup)
+Vue.use(Row)
+Vue.use(Select)
+Vue.use(Step)
+Vue.use(Steps)
+Vue.use(Timeline)
+Vue.use(TimelineItem)
+Vue.use(Upload)
 Vue.use(Loading)
 
 Vue.prototype.$echarts = echarts

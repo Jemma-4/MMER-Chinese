@@ -1,6 +1,6 @@
 ## 前端配置与用户说明
 
-### 相关配置
+#### 相关配置
 
 + 依赖安装
 
@@ -14,26 +14,32 @@
   yarn serve
   ```
 
-### 用户说明
+#### 用户使用过程
 
-+ 初始页面（提供情绪问答列表）
++ 以文本|语音的方式输入对问题的回答
++ 对回答长句进行切分，模型对切分后的短文本列表进行细粒度情绪分析并展示初步分类结果
++ 可以对分类结果进行修正，上传正确情绪标签
 
-  ![image-20220916164221073](./static/1.png)
+#### 页面说明
 
-+ ​	![image-20220916164306598](./static/2.png)
+- 初始页面（文本回答）
 
-+ 录音文件采集/上传
-  测试音频`test.wav`
+  ![image-20220924141613687](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220924141613687.png)
 
-  ![image-20220916164415861](./static/3.png)
++ 初始页面（语音回答）
 
-+ 返回模型处理结果
+  ![image-20220924141643623](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220924141643623.png)
 
-  ![image-20220916164533271](./static/4.png)
++ 模型解析过程中
 
-  + 提供录音的播放；
-  + 语音识别接口返回识别出的文本，将长文本切割为多个短文本，细粒度识别文本情绪；
-  + 文本情绪识别模块返回情绪标签并展示；
-  + 用户可手动更改文本情绪标注并传回后端数据收集；
+  ![image-20220924141800512](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220924141800512.png)
 
-+ ![image-20220916164756533](./static/5.png)
++ 模型解析结果
+
+  ![image-20220924142011069](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220924142011069.png)
+
++ 修改情绪标签
+
+  ![image-20220924142036211](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20220924142036211.png)
+
+​	

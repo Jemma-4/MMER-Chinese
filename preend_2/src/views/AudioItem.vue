@@ -108,7 +108,7 @@ export default {
       recEnd: false,
       recUpload: false,
       recBtnText: "录音",
-      processReady: false,
+      processReady: true,
       inputMode: 0, //0：默认文字上传；1：语音上传
       textInput: "",
       audioMD5: "",
@@ -125,13 +125,10 @@ export default {
         { id: 6, tag: "害怕" },
       ],
       textFromAudio: [
-        { id: 1, text: "我今天很开心" },
-        { id: 2, text: "我今天很难过" },
-        { id: 3, text: "我今天很生气" },
-        { id: 4, text: "我今天很惊讶" },
-        { id: 5, text: "我今天很害怕" },
+        { id: 1, text: "今天阳光明媚，是个难得一见的好天气，我的心情也正是如此。" },
+        { id: 2, text: "天空中下起了小雨，秋意有些萧瑟，我的心情也正是如此。" },
       ],
-      emoFromText: ["开心", "伤心", "生气", "惊讶", "害怕"],
+      emoFromText: ["开心", "伤心"],
     };
   },
   methods: {
