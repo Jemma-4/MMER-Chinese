@@ -2,11 +2,25 @@
   <div class="block" style="height: 100%">
     <div class="line"></div>
     <p class="title">ATMR心智系统</p>
-    <div class="line-label">
-      <div v-for="item in questionList" :key="item.id" class="line-icon" v-show="getShowById(item.id)"
-        @click="curId=item.id">
-        <div :class="getClassByIdIcon(item.id)" style="float: left; margin-top: 1px"></div>
-        <div :class="getClassByIdTitle(item.id)" style="text-align: left; width: 10%">
+    <div
+      class="line-label"
+      @mousewheel.self="changeCurId"
+    >
+      <div
+        v-for="item in questionList"
+        :key="item.id"
+        class="line-icon"
+        v-show="getShowById(item.id)"
+        @click="curId = item.id"
+      >
+        <div
+          :class="getClassByIdIcon(item.id)"
+          style="float: left; margin-top: 1px"
+        ></div>
+        <div
+          :class="getClassByIdTitle(item.id)"
+          style="text-align: left; width: 10%"
+        >
           {{ item.id + 1 }}
         </div>
       </div>
@@ -23,51 +37,65 @@
         <div v-show="!isReport">
           <div class="question-title">
             问题{{ questionList[curId].id + 1 }}：{{
-            questionList[curId].question
+              questionList[curId].question
             }}
           </div>
           <audio controls style="display: none" id="audio">
-            <source :src="baseurl+'playAudio/?audioMD5='+ questionList[curId].audioMD5" />
+            <source
+              :src="
+                baseurl + 'playAudio/?audioMD5=' + questionList[curId].audioMD5
+              "
+            />
             <!-- <source src="https://www.runoob.com/try/demo_source/horse.mp3" /> -->
           </audio>
           <el-radio-group v-model="chosenList[curId]" style="width: 100%">
-            <el-radio v-for="option in questionList[curId].options" :key="option.id" :label="option.id"
-              @change="getFinished" class="option">{{ option.text }}</el-radio>
+            <el-radio
+              v-for="option in questionList[curId].options"
+              :key="option.id"
+              :label="option.id"
+              @change="getFinished"
+              class="option"
+              >{{ option.text }}</el-radio
+            >
           </el-radio-group>
-          <el-button v-show="!isFinished" @click="onNext" class="button">下一题</el-button>
-          <el-button v-show="!isFinished" @click="onLast" class="button">上一题</el-button>
-          <el-button v-show="isFinished" @click="onSubmit" class="button">提交</el-button>
+          <el-button v-show="!isFinished" @click="onNext" class="button"
+            >下一题</el-button
+          >
+          <el-button v-show="!isFinished" @click="onLast" class="button"
+            >上一题</el-button
+          >
+          <el-button v-show="isFinished" @click="onSubmit" class="button"
+            >提交</el-button
+          >
         </div>
       </div>
-      <bar-chart-report ref="bar_chart_report" style="margin-top:5%;"/>
+      <bar-chart-report ref="bar_chart_report" style="margin-top: 5%" />
       <!-- <div class="chart-card" :style="isReport?'':'display:none;'">
         <bar-chart-report ref="bar_chart_report" />
       </div> -->
-
     </div>
   </div>
 </template>
 
 <script>
-import { get, post, baseurl } from '../network/request.js'
+import { get, post, baseurl } from "../network/request.js";
 import BarChartReport from "../components/BarChart3.vue";
 export default {
   data() {
     return {
-      baseurl: '',
+      baseurl: "",
       isStart: false,
       curId: 0,
       chosenList: [],
       isFinished: false,
       questionList: [],
       quiz_id: 0,
-      answer_id: '',
+      answer_id: "",
       isReport: false,
-
     };
   },
   components: {
-    BarChartReport
+    BarChartReport,
   },
   methods: {
     getClassByIdIcon(id) {
@@ -136,21 +164,21 @@ export default {
       //提交数据
       //chosenList存放答案 index为题号 chosenList[index]为答案
       console.log(this.chosenList);
-      var answer = []
+      var answer = [];
       for (var i = 0; i < this.chosenList.length; i++) {
         var question = this.questionList[i];
-        var ans = [question.type, question.qid, this.chosenList[i]]
-        console.log(ans)
-        answer.push(ans)
+        var ans = [question.type, question.qid, this.chosenList[i]];
+        console.log(ans);
+        answer.push(ans);
       }
 
       let formData = new FormData();
-      formData.append('answer', JSON.stringify(answer));
-      formData.append('quiz_id', this.quiz_id);
-      formData.append('answer_id', this.answer_id);
+      formData.append("answer", JSON.stringify(answer));
+      formData.append("quiz_id", this.quiz_id);
+      formData.append("answer_id", this.answer_id);
       post({
-        url: baseurl + 'uploadQuizAnswer/',
-        data: formData
+        url: baseurl + "uploadQuizAnswer/",
+        data: formData,
       }).then((res) => {
         if (res.data.ok != 0) {
           return;
@@ -160,18 +188,31 @@ export default {
     },
     genReport(answer) {
       var chartData = {
-        'A': 0,
-        'T': 0,
-        'M': 0,
-        'R': 0
-      }
+        A: 0,
+        T: 0,
+        M: 0,
+        R: 0,
+      };
       for (var i = 0; i < answer.length; i++) {
         chartData[answer[i][0]] += answer[i][2];
       }
       console.log(chartData);
       this.isReport = true;
-      this.$refs.bar_chart_report.drawChart(chartData)
-    }
+      this.$refs.bar_chart_report.drawChart(chartData);
+    },
+    changeCurId(e) {
+      console.log("gunlunshijian");
+      let delta = e.wheelDelta;
+      if (delta > 0) {
+        if (this.curId > 0) {
+          this.curId--;
+        }
+      } else {
+        if (this.curId < this.questionList.length - 1) {
+          this.curId++;
+        }
+      }
+    },
   },
 
   mounted() {
@@ -186,9 +227,8 @@ export default {
       }
       // console.log(audioMD5);
     });
-  }
+  },
 };
-
 </script>
 
 <style scoped>
@@ -312,7 +352,7 @@ export default {
 .line-label {
   height: 70%;
   position: fixed;
-  margin-left: 10%;
+  padding-left: 10%;
   margin-top: 5%;
 }
 
@@ -331,7 +371,7 @@ export default {
   margin-top: 70px;
 }
 
->>>.el-button {
+>>> .el-button {
   border: 0px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 6px;
