@@ -27,8 +27,8 @@
     </div>
     <div style="height: 70%">
       <div class="qusition-card" v-show="!isStart">
-        <div>
-          说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;说明介绍一下ATMR，balabalabala;
+        <div style="font-size: 20px; width: 150%; margin-left: -25%; text-align: left;">
+          心智模式决定了我们观察事物的视角以及思维表达的风格。一个人的成功与失败以及人生的幸福与否，也与个人的心智能力息息相关。心智力量的强弱因人而异，作用于个人心智成长的程度和结果也大相径庭。  
         </div>
         <el-button @click="onStart" class="start-button">开始答题</el-button>
       </div>
@@ -127,6 +127,7 @@ export default {
           all = false;
         }
       }
+      this.onNext()
       this.isFinished = all;
     },
     getShowById(id) {

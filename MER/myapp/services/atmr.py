@@ -6,7 +6,7 @@ from myapp.utils.IDGenerator import randomID
 
 # 写个样例，后续可能随机题序？从题库抽题？
 def get_quiz(rand = True):
-    json_data = json.load(open(atmrroot + 'quiz_2.json', 'r', encoding='utf8'))
+    json_data = json.load(open(atmrroot + 'quiz_1.json', 'r', encoding='utf8'))
     if rand:
         shuffle(json_data)
 
