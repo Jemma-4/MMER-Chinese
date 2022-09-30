@@ -8,7 +8,7 @@
         :key="item.qid"
         class="line-icon"
         v-show="getShowById(item.qid)"
-        @click="curId = item.qid"
+        @click="processClick(item.qid)"
       >
         <div
           :class="getClassByIdIcon(item.qid)"
@@ -44,7 +44,7 @@
                 baseurl + 'playAudio/?audioMD5=' + questionList[curId].audioMD5
               "
             /> -->
-        <source src="https://www.runoob.com/try/demo_source/horse.mp3" />
+        <source src="../assets/music/0.mp3" id="source"/>
       </audio>
 
       <div class="qusition-card" v-if="isStart">
@@ -155,13 +155,11 @@ export default {
     },
     onNext() {
       this.curId < this.questionList.length - 1 ? (this.curId += 1) : {};
-      var music = document.getElementById("audio");
-      music.play();
+      this.changeMusic();
     },
     onLast() {
       this.curId > 0 ? (this.curId -= 1) : {};
-      var music = document.getElementById("audio");
-      music.play();
+      this.changeMusic();
     },
     onStart() {
       this.isStart = true;
@@ -222,6 +220,17 @@ export default {
         }
       }
     },
+    processClick(qid){
+      this.curId=qid;
+      this.changeMusic();
+    },
+    changeMusic(){
+      var music = document.getElementById("audio");
+      var source = document.getElementById("source");
+      source.src=require("../assets/music/"+this.curId+".mp3")
+      music.load()
+      music.play()
+    }
   },
 
   mounted() {
