@@ -2,52 +2,58 @@
   <div class="block" style="height: 100%">
     <div class="line"></div>
     <p class="title">ATMR心智系统</p>
-    <div
-      class="line-label"
-      @mousewheel.self="changeCurId"
-    >
+    <div class="line-label" @mousewheel="changeCurId" >
       <div
         v-for="item in questionList"
-        :key="item.id"
+        :key="item.qid"
         class="line-icon"
-        v-show="getShowById(item.id)"
-        @click="curId = item.id"
+        v-show="getShowById(item.qid)"
+        @click="curId = item.qid"
       >
         <div
-          :class="getClassByIdIcon(item.id)"
+          :class="getClassByIdIcon(item.qid)"
           style="float: left; margin-top: 1px"
         ></div>
         <div
-          :class="getClassByIdTitle(item.id)"
+          :class="getClassByIdTitle(item.qid)"
           style="text-align: left; width: 10%"
         >
-          {{ item.id + 1 }}
+          {{ item.qid + 1 }}
         </div>
       </div>
     </div>
     <div style="height: 70%">
       <div class="qusition-card" v-show="!isStart">
-        <div style="font-size: 20px; width: 150%; margin-left: -25%; text-align: left;">
-          心智模式决定了我们观察事物的视角以及思维表达的风格。一个人的成功与失败以及人生的幸福与否，也与个人的心智能力息息相关。心智力量的强弱因人而异，作用于个人心智成长的程度和结果也大相径庭。  
+        <div
+          style="
+            font-size: 20px;
+            width: 150%;
+            margin-left: -25%;
+            text-align: left;
+            margin-top:60px;
+          "
+        >
+          心智模式决定了我们观察事物的视角以及思维表达的风格。一个人的成功与失败以及人生的幸福与否，也与个人的心智能力息息相关。心智力量的强弱因人而异，作用于个人心智成长的程度和结果也大相径庭。
         </div>
         <el-button @click="onStart" class="start-button">开始答题</el-button>
       </div>
 
-      <div class="qusition-card" v-show="isStart">
-        <div v-show="!isReport">
-          <div class="question-title">
-            问题{{ questionList[curId].id + 1 }}：{{
-              questionList[curId].question
-            }}
-          </div>
-          <audio controls style="display: none" id="audio">
-            <source
+      <audio controls style="display: none" id="audio">
+        <!-- <source
               :src="
                 baseurl + 'playAudio/?audioMD5=' + questionList[curId].audioMD5
               "
-            />
-            <!-- <source src="https://www.runoob.com/try/demo_source/horse.mp3" /> -->
-          </audio>
+            /> -->
+        <source src="https://www.runoob.com/try/demo_source/horse.mp3" />
+      </audio>
+
+      <div class="qusition-card" v-if="isStart">
+        <div v-show="!isReport">
+          <div class="question-title">
+            问题{{ questionList[curId].qid + 1 }}：{{
+              questionList[curId].question
+            }}
+          </div>
           <el-radio-group v-model="chosenList[curId]" style="width: 100%">
             <el-radio
               v-for="option in questionList[curId].options"
@@ -80,6 +86,7 @@
 <script>
 import { get, post, baseurl } from "../network/request.js";
 import BarChartReport from "../components/BarChart3.vue";
+import quiz_2 from "../assets/json/quiz_2.json";
 export default {
   data() {
     return {
@@ -127,7 +134,7 @@ export default {
           all = false;
         }
       }
-      this.onNext()
+      this.onNext();
       this.isFinished = all;
     },
     getShowById(id) {
@@ -158,6 +165,7 @@ export default {
     },
     onStart() {
       this.isStart = true;
+      this.curId = 0;
       var music = document.getElementById("audio");
       music.play();
     },
@@ -217,17 +225,21 @@ export default {
   },
 
   mounted() {
-    this.baseurl = baseurl;
-    get({
-      url: baseurl + "getQuiz/",
-    }).then((res) => {
-      if (res.data.ok != 0) {
-        this.quiz_id = res.data.quiz_id;
-        this.answer_id = res.data.answer_id;
-        this.questionList = res.data.data;
-      }
-      // console.log(audioMD5);
-    });
+    // this.baseurl = baseurl;
+    // get({
+    //   url: baseurl + "getQuiz/",
+    // }).then((res) => {
+    //   if (res.data.ok != 0) {
+    //     this.quiz_id = res.data.quiz_id;
+    //     this.answer_id = res.data.answer_id;
+    //     this.questionList = res.data.data;
+    //   }
+    //   // console.log(audioMD5);
+    // });
+    this.quiz_id = 1;
+    this.answer_id = 2;
+    this.questionList = quiz_2;
+    console.log(quiz_2.length);
   },
 };
 </script>
@@ -252,7 +264,7 @@ export default {
   position: absolute;
   left: 20%;
   border-radius: 10px;
-  padding: 18%;
+  padding: 15%;
   padding-top: 90px;
 }
 

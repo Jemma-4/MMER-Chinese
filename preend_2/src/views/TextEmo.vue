@@ -1,7 +1,7 @@
 <template>
   <div class="block" style="height: 100%">
     <p class="title">语音情绪识别系统</p>
-
+    <button class="go-button" @click="goTest">前往心智测试 >></button>
     <el-carousel
       :autoplay="false"
       trigger="click"
@@ -46,7 +46,11 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+    goTest(){
+      this.$router.push({ path:'/question'  });
+    }
+  },
 };
 </script>
 
@@ -60,6 +64,20 @@ export default {
   color: white;
   text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 10px rgba(0,0,0,0.45);
   font-weight: bold;
+}
+
+.go-button{
+  position:fixed;
+  font-size: 20px;
+  margin: 0px;
+  color: rgba(255,255,255,0.6);
+  text-shadow: 0 0 10px rgba(0,0,0,0.45), 0 0 10px rgba(0,0,0,0.45);
+  font-weight: bold;
+  background: rgba(0,0,0,0);
+  border:0px;
+  top:0%;
+  height:100px;
+  right:2%;
 }
 
 .question,

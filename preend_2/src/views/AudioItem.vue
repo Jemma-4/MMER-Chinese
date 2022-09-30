@@ -124,10 +124,7 @@ export default {
         { id: 5, tag: "伤心" },
         { id: 6, tag: "害怕" },
       ],
-      textFromAudio: [
-        { id: 1, text: "今天阳光明媚，是个难得一见的好天气，我的心情也正是如此。" },
-        { id: 2, text: "天空中下起了小雨，秋意有些萧瑟，我的心情也正是如此。" },
-      ],
+      textFromAudio: [],
       emoFromText: ["开心", "伤心"],
     };
   },

@@ -16,43 +16,46 @@ export default {
         document.getElementById("bar-chart-report")
       );
 
-      let series = [];
-      let x_data = ['A','T','M','R'];
-      let color = ["#FFFF00", "#FFC0CB", "red", "#6495ED"]
+      let series = {};
+      let x_data = ["A", "T", "M", "R"];
+      let color = ["#FFFF00", "#FFC0CB", "red", "#6495ED"];
+      let n = [0, 0, 0, 0];
       for (var i = 0; i < x_data.length; i++) {
-        let n = new Array(x_data.length);
-        n.fill(0, 0, x_data.length); //填充数组
-        console.log(x_data[i],  y_data[x_data[i]])
-        n[i] = y_data[x_data[i]];
-        series.push({
-          type: "bar",
-          stack: "total",
-          coordinateSystem: "polar",
-          color: color[i],
-          emphasis: {
-            focus: "series",
+        let item = {
+          value: y_data[x_data[i]],
+          itemStyle: {
+            color: color[i],
           },
-          data: n,
-        });
+        };
+        n[i] = item;
       }
 
+      series = {
+        type: "bar",
+        coordinateSystem: "polar",
+        data: n,
+        label: {
+          show: true,
+          position: "middle",
+          formatter: "{b}: {c}",
+        },
+      };
+
       let option = {
+        polar: {
+          radius: [30, "80%"],
+        },
+        radiusAxis: {
+          axisLabel: this.$axisStyle.axisLabel,
+          axisLine: this.$axisStyle.axisLine,
+        },
         angleAxis: {
           type: "category",
           data: x_data,
           axisLabel: this.$axisStyle.axisLabel,
           axisLine: this.$axisStyle.axisLine,
         },
-        radiusAxis: {
-          axisLabel: this.$axisStyle.axisLabel,
-          axisLine: this.$axisStyle.axisLine,
-        },
-        polar: {},
         series: series,
-        legend: {
-          show: false,
-          data: x_data,
-        },
       };
       myChart.setOption(option);
     },
@@ -75,6 +78,5 @@ export default {
   width: 100%;
   height: 100%;
   /* background-color: aliceblue; */
-
 }
 </style>
